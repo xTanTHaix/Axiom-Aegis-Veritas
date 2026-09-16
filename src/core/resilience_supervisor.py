@@ -227,6 +227,32 @@ class Process:
         self.stop()
         self.start()
 
+    def is_alive(self) -> bool:
+        """Whether the underlying process is alive."""
+        if self._proc is not None and hasattr(self._proc, "is_alive"):
+            return self._proc.is_alive()
+        return self._running
+
+    def kill(self) -> None:
+        """Kill the worker process."""
+        self._running = False
+        if self._proc is not None:
+            if hasattr(self._proc, "kill"):
+                self._proc.kill()
+            elif hasattr(self._proc, "terminate"):
+                self._proc.terminate()
+
+    def terminate(self) -> None:
+        """Terminate the worker process."""
+        self._running = False
+        if self._proc is not None and hasattr(self._proc, "terminate"):
+            self._proc.terminate()
+
+    def join(self, timeout: Optional[float] = None) -> None:
+        """Wait for the worker process to terminate."""
+        if self._proc is not None and hasattr(self._proc, "join"):
+            self._proc.join(timeout=timeout)
+
     @property
     def is_running(self) -> bool:
         """Whether the process is currently running."""
@@ -877,10 +903,23 @@ class ResilientWorkerSupervisor:
             return
 
         for proc in self._worker_processes:
-            if proc and proc.is_alive():
-                logger.info(f"Killing hung process: {proc.name} (PID {proc.pid})")
-                proc.kill()
-                proc.join(timeout=2.0)
+            if proc is None:
+                continue
+            is_alive_fn = getattr(proc, "is_alive", None)
+            is_alive = is_alive_fn() if callable(is_alive_fn) else getattr(proc, "is_running", False)
+            if is_alive:
+                proc_name = getattr(proc, "name", "worker")
+                proc_pid = getattr(proc, "pid", "unknown")
+                logger.info(f"Killing hung process: {proc_name} (PID {proc_pid})")
+                if hasattr(proc, "kill") and callable(proc.kill):
+                    proc.kill()
+                elif hasattr(proc, "terminate") and callable(proc.terminate):
+                    proc.terminate()
+                elif hasattr(proc, "stop") and callable(proc.stop):
+                    proc.stop()
+
+                if hasattr(proc, "join") and callable(proc.join):
+                    proc.join(timeout=2.0)
 
         # Clear process reference
         self._process = None
