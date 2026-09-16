@@ -447,8 +447,6 @@ AXIOM-AEGIS-VERITAS is engineered for frictionless redistribution under **BSL 1.
 
 ## 💼 Licensing & Commercial Support
 
-<img width="100%" alt="AXIOM-AEGIS-VERITAS Architecture Blueprint 1.0" src=".md/img42.jpg" />
-
 <div align="center">
 
 <br>
