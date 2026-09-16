@@ -150,6 +150,7 @@ class Process:
         args: Tuple[Any, ...] = (),
         kwargs: Dict[str, Any] = None,
         name: Optional[str] = None,
+        daemon: bool = True,
     ) -> None:
         """Initialize worker process wrapper.
 
@@ -168,6 +169,7 @@ class Process:
         self.args = args
         self.kwargs = kwargs or {}
         self.name = name or f"Worker-{id(self)}"
+        self.daemon = daemon
 
         self._proc: Optional[Process] = None
         self._running: bool = False
@@ -188,6 +190,7 @@ class Process:
             args=self.args,
             kwargs=self.kwargs,
             name=self.name,
+            daemon=self.daemon,
         )
         self._proc.start()
         self._running = True
@@ -794,15 +797,17 @@ class ResilientWorkerSupervisor:
             self._drainer.stop()
             self._drainer = None
 
-        # Close queues
+        # Close queues safely without hanging parent on exit
         try:
-            self._task_queue.close()
-            self._task_queue.join_thread()
+            if self._task_queue is not None:
+                self._task_queue.cancel_join_thread()
+                self._task_queue.close()
         except Exception:
             pass
         try:
-            self._result_queue.close()
-            self._result_queue.join_thread()
+            if self._result_queue is not None:
+                self._result_queue.cancel_join_thread()
+                self._result_queue.close()
         except Exception:
             pass
 
@@ -921,10 +926,29 @@ class ResilientWorkerSupervisor:
                 if hasattr(proc, "join") and callable(proc.join):
                     proc.join(timeout=2.0)
 
-        # Clear process reference
+        # Clear process reference and drainer/queues to prevent atexit hangs
         self._process = None
         self._worker_processes.clear()
         self._worker_pids.clear()
+
+        if self._drainer is not None:
+            try:
+                self._drainer.stop()
+            except Exception:
+                pass
+            self._drainer = None
+
+        if self._task_queue is not None:
+            try:
+                self._task_queue.cancel_join_thread()
+            except Exception:
+                pass
+        if self._result_queue is not None:
+            try:
+                self._result_queue.cancel_join_thread()
+            except Exception:
+                pass
+
         logger.info("All hung processes killed")
 
     def __enter__(self) -> "ResilientWorkerSupervisor":

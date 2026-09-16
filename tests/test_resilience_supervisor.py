@@ -228,10 +228,11 @@ class TestResilientWorkerSupervisor:
         try:
             supervisor.start()
             assert supervisor.process is not None
-            supervisor.stop()
         except Exception:  # pylint: disable=broad-except
             # Multiprocessing may fail on Windows
             pass
+        finally:
+            supervisor.stop()
 
     def test_supervisor_stop(self):
         """Test supervisor stop."""
@@ -258,6 +259,8 @@ class TestResilientWorkerSupervisor:
         except Exception:  # pylint: disable=broad-except
             # Multiprocessing may fail on Windows
             pass
+        finally:
+            supervisor.stop()
 
     def test_supervisor_hung_process(self):
         """Test hung process detection."""
@@ -266,10 +269,13 @@ class TestResilientWorkerSupervisor:
             gas_meter=GasMeter(limit=1000),
             timeout_sec=1.0,
         )
-        supervisor.start()
-        # Simulate hung process
-        supervisor._kill_hung_process()
-        assert supervisor.process is None
+        try:
+            supervisor.start()
+            # Simulate hung process
+            supervisor._kill_hung_process()
+            assert supervisor.process is None
+        finally:
+            supervisor.stop()
 
     def test_supervisor_hung_process_error(self):
         """Test _kill_hung_process raises exception."""
@@ -278,13 +284,15 @@ class TestResilientWorkerSupervisor:
             gas_meter=GasMeter(limit=1000),
             timeout_sec=1.0,
         )
-        supervisor.start()
-        # _kill_hung_process may raise OSError or other exceptions
         try:
+            supervisor.start()
+            # _kill_hung_process may raise OSError or other exceptions
             supervisor._kill_hung_process()
             assert False, "Expected an exception to be raised"
         except Exception:  # pylint: disable=broad-except
             pass  # Expected
+        finally:
+            supervisor.stop()
 
     def test_supervisor_repr(self):
         """Test supervisor representation."""
@@ -310,8 +318,11 @@ class TestPipeDrainer:
     def test_drainer_start(self, queue):
         """Test drainer start."""
         drainer = PipeDrainer(queue=queue)
-        drainer.start()
-        assert drainer.thread is not None
+        try:
+            drainer.start()
+            assert drainer.thread is not None
+        finally:
+            drainer.stop()
 
     def test_drainer_stop(self, queue):
         """Test drainer stop."""
