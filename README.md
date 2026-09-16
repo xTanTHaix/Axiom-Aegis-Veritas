@@ -238,6 +238,9 @@ python main.py
 ```
 
 #### Sample Terminal Dashboard Output:
+
+<details>
+  
 ```text
                AXIOM-AEGIS-VERITAS - Terminal Dashboard                
 
@@ -257,6 +260,7 @@ Layer: L6_Provenance_Semiring   Clean (Confidence=0.00) [PASS]
 Layer: L7_Witness_Shard         2 witnesses generated   [PASS]
 ======================================================================
 ```
+</details>
 
 ---
 
