@@ -1,0 +1,91 @@
+# BUSINESS SOURCE LICENSE 1.1 (BSL 1.1)
+# AXIOM-AEGIS-VERITAS — Version 1.0.0 through 1.x.x
+
+Copyright (c) 2026 xTanTHaix
+Licensor: xTanTHaix
+Software: AXIOM-AEGIS-VERITAS (Versions 1.0.0 through 1.x.x)
+Project Repository: https://github.com/xtanthaix/axiom-aegis-veritas
+Official Creator Profile: https://ko-fi.com/xtanthaix
+Official Commercial License Store: https://ko-fi.com/xtanthaix/shop
+
+--------------------------------------------------------------------------------
+1. PARAMETERS & USE GRANT
+--------------------------------------------------------------------------------
+(a) Free Use Grant:
+    The Licensor hereby grants you the worldwide, royalty-free, non-exclusive 
+    right to copy, modify, adapt, inspect, test, integrate, and run the Software 
+    free of charge, subject strictly to the Non-Commercial and Personal Use 
+    conditions specified herein.
+
+(b) Non-Commercial & Personal Use Scope:
+    You may freely utilize and modify the Software without cost exclusively for:
+    - Personal, hobbyist, educational, and academic research purposes.
+    - Non-profit open-source evaluations where zero commercial advantage, revenue, 
+      consulting fee, or economic gain is derived directly or indirectly.
+
+(c) Commercial Restrictions & Prohibitions:
+    - Strictly prohibited for any commercial deployment, corporate operations, 
+      paid client auditing, or for-profit SaaS/cloud services without obtaining a 
+      Commercial License.
+    - Strictly prohibited from being sold, resold, or distributed as a competing 
+      product, standalone verification service, or market alternative against the Licensor.
+    - Strictly prohibited from inclusion as a dependency or module in any project 
+      that is NOT strictly for personal use.
+
+(d) Commercial License Requirement ($4.20 USD):
+    Any commercial exploitation or non-personal integration of the Software requires 
+    purchasing a perpetual, non-exclusive Commercial License for $4.20 USD via 
+    the official Ko-fi Shop:
+    - Shop URL: https://ko-fi.com/xtanthaix/shop
+    - Profile:  https://ko-fi.com/xtanthaix
+    
+    Each $4.20 USD Commercial License covers exactly one (1) designated commercial 
+    project. The Ko-fi Order ID and receipt constitute the official proof of license.
+
+(e) Change Date & Change License:
+    Effective on the Change Date of 2030-01-01 (or the fourth anniversary of the 
+    initial release of each respective minor version), the Licensor unconditionally 
+    converts and licenses the Software under the terms of the Change License:
+    Change License: Apache License, Version 2.0 (or MIT License).
+
+--------------------------------------------------------------------------------
+2. TERMS AND CONDITIONS
+--------------------------------------------------------------------------------
+1. NON-COMMERCIAL GRANT OF RIGHTS
+Subject to the provisions of this License, the Licensor grants to any licensee 
+a non-transferable, non-exclusive license to use, modify, branch, and test the 
+Software solely for individual, personal, and educational purposes without fee.
+
+2. COMMERCIAL LICENSING OBLIGATION
+If the Software, its algorithmic engines (including Octagon Domains, CST Merkle 
+Caching, Dual SMT Consensus, or DPOR Concurrency Scheduling), or its subroutines 
+are embedded into, linked with, or used to execute commercial projects:
+(a) The licensee must purchase a valid Commercial License ($4.20 USD) from 
+    https://ko-fi.com/xtanthaix/shop.
+(b) The licensee must retain the Ko-fi Order ID and receipt as permanent proof 
+    of legal licensing.
+
+3. ANTI-COMPETITION & NON-DERIVATIVE MARKET RESTRICTION
+You shall not use the Software or any portion thereof to construct, market, license, 
+or sell any software development tool, static analysis engine, SMT testing harness, 
+or automated code-verification service that competes directly or indirectly with 
+AXIOM-AEGIS-VERITAS or any commercial offerings of the Licensor.
+
+4. AUDIT RIGHTS & AUTOMATIC TERMINATION
+(a) Unauthorized Commercial Exploitation: Deploying or utilizing this Software in 
+    any commercial project without purchasing a valid $4.20 USD Commercial License 
+    immediately and automatically revokes all rights granted under this License.
+(b) Intentional Infringement: Commercial use without a verified license constitutes 
+    willful copyright infringement under applicable intellectual property laws.
+(c) Remedies: The Licensor reserves the right to pursue full injunctive relief, 
+    statutory damages, recovery of attorney fees, and total disgorgement of profits 
+    earned from the unauthorized commercial exploitation.
+
+5. DISCLAIMER OF WARRANTY & LIMITATION OF LIABILITY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, 
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+THE SOFTWARE.
