@@ -1,0 +1,56 @@
+# =============================================================================
+# AXIOM-AEGIS-VERITAS — Git Ignore
+# =============================================================================
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*.class
+*.so
+*.pyd
+
+# Testing & Coverage Artifacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Distribution & Build
+build/
+dist/
+*.egg-info/
+*.egg
+
+# IDE & Editor Local Configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local Environment Variables
+.env
+.env.local
+
+# Documentation Planning Notes (Ignore internal notes, preserve images for README)
+.md/*
+!.md/*.jpg
+!.md/*.png
+!.md/*.jpeg
+!.md/*.svg
+!.md/*.webp
+
+# Commercial Assets & Sign-Off Templates (Kept local for Ko-fi Shop sale)
+*Sign-Off*.md
+Architecture Sign-Off & Verification.md
+Standard Architecture Sign-Off & Verification Template.md

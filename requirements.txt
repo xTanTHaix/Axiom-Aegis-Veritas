@@ -1,0 +1,14 @@
+# =============================================================================
+# AXIOM-AEGIS-VERITAS — Production Dependencies
+# All dependencies are 100% Permissive (MIT / BSD) and BSL 1.1 Compliant
+# Zero Copyleft (No GPL, No LGPL, No AGPL, No MPL, No Non-Commercial Clauses)
+# =============================================================================
+
+# Layer 1: Concrete Syntax Tree & Merkle Cache (MIT License)
+libcst>=1.0.0
+
+# Layer 3: SMT Formal Verification & Constraint Solver (MIT License)
+z3-solver>=5.0.0
+
+# Terminal UI & Cross-Platform ANSI Color Output (BSD-3-Clause)
+colorama>=0.4.6
