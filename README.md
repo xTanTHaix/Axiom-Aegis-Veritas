@@ -152,6 +152,8 @@
 AXIOM-AEGIS-VERITAS is validated against an exhaustive 20-module test suite comprising standard unit tests, **1:1 Street Tests** (high-stress and chaos engineering), and **Cluster Load Supervisors**.
 
 <details>
+  
+```text
 ============================= test session starts =============================
 platform win32 -- Python 3.12.8, pytest-9.0.2, pluggy-1.6.0
 rootdir: L:\axiom-aegis-veritas
@@ -179,6 +181,7 @@ tests/test_resilience_supervisor.py ................................     [ 91%]
 tests/test_wal_writer.py .........................................       [100%]
 
 ============================= 573 passed in 6.77s =============================
+```
 
 </details>
 
@@ -238,7 +241,7 @@ python main.py --file path/to/target.py --output report.txt
 python main.py
 ```
 
-#### Sample Terminal Dashboard Output:
+#### Sample Terminal Dashboard Output👾:
 
 <details>
   
