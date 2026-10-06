@@ -30,7 +30,7 @@
 | 👁️ **Superintendency of Symbolic Logic & Solver Consensus** | Orchestrates dual SMT cross-validation between Z3 DPLL(T) and QF_LRA Simplex Tableau with Minimal Unsatisfiable Core (MUC) defect triage. |
 | ⚡ **Concurrency & Distributed Resilience Directorate** | Architects Dynamic Partial Order Reduction (DPOR), Mazurkiewicz trace reductions, non-blocking IPC PipeDrainers, and Erlang-style supervisory recovery (< 5 ms restart). |
 | 🔬 **Division of Provenance & Evidence Fusion** | Governs multi-layer defect confidence across the canonical probability semiring $\mathbb{K}_{\text{prob}}$, damped asymptotically against McCabe Cyclomatic Complexity ($\rho(CC, \alpha)$). |
-| ⚖️ **Sovereignty & Supply-Chain License Governance** | Guards dependency integrity, guarantees 100% permissive runtime decoupling (Zero-LGPL), and certifies frictionless BSL 1.1 commercial redistribution. |
+| ⚖️ **Sovereignty & Supply-Chain License Governance** | Guards dependency integrity, guarantees 100% permissive runtime decoupling (Zero-LGPL), and certifies 100% permissive Apache-2.0 commercial and open-source distribution. |
 
 </details>
 
@@ -46,7 +46,7 @@
 [![CI Multi-OS](https://img.shields.io/badge/CI-Ubuntu%20%7C%20Windows-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)](#)
 [![Supply Chain](https://img.shields.io/badge/dependencies-3%20Permissive%20Only-10B981?style=for-the-badge&logo=pypi&logoColor=white)](#️-license--dependency-governance)
 [![Zero Copyleft](https://img.shields.io/badge/copyleft-Zero%20LGPL%20%2F%20GPL-059669?style=for-the-badge&logo=shield&logoColor=white)](#️-license--dependency-governance)
-[![License](https://img.shields.io/badge/license-BSL%201.1%20Ready-059669?style=for-the-badge&logo=googledocs&logoColor=white)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-059669?style=for-the-badge&logo=apache&logoColor=white)](LICENSE)
 
 <br>
 
@@ -419,7 +419,7 @@ for py_file in target_repo.rglob("*.py"):
 - **UTF-8 BOM Defense (`utf-8-sig`):** Windows text utilities frequently inject a 3-byte Byte Order Mark (`\xef\xbb\xbf` / `U+FEFF`) into scripts. All internal AST ingestion routines utilize `utf-8-sig` to transparently discard BOM headers, preventing `SyntaxError` during formal AST parsing (BUG-PY-006).
 
 ### 100% Permissive SMT Architecture (Zero-LGPL Guarantee)
-To eliminate all legal friction and compliance risks under **BSL 1.1** or commercial redistribution, external solvers linking against copyleft libraries (such as CVC5 linking against GNU GMP under LGPL v3) are completely decoupled from runtime dependencies.
+To eliminate all legal friction and compliance risks under **Apache-2.0** or commercial redistribution, external solvers linking against copyleft libraries (such as CVC5 linking against GNU GMP under LGPL v3) are completely decoupled from runtime dependencies.
 The Layer 3 Consensus Engine executes independent dual verification via **Z3 DPLL(T) (MIT)** and **QF_LRA Simplex Tableau (MIT)** cross-validated against the **Octagon DBM Domain (Pure Python)**. Every runtime component is strictly covered by MIT or BSD-3-Clause licenses.
 
 ### Active Pipe Buffer Deadlock Elimination (>64KB)
@@ -429,10 +429,10 @@ When running large multiprocess worker swarms, operating system IPC pipes block 
 
 ## ⚖️ License & Dependency Governance
 
-AXIOM-AEGIS-VERITAS is engineered for frictionless redistribution under **BSL 1.1 (Business Source License 1.1)** and commercial licensing regimes.
+AXIOM-AEGIS-VERITAS is released under the permissive **Apache License 2.0 (Apache-2.0)**.
 
 ### Runtime Dependency Audit
-| Dependency | Version | License | Copyleft Risk | Commercial / BSL 1.1 Status |
+| Dependency | Version | License | Copyleft Risk | Apache-2.0 Status |
 |---|---|---|:---:|:---:|
 | `libcst` | $\ge 1.0.0$ | **MIT** (+ PSF/Apache snippets) | None | 🟢 Permissive (Compliant) |
 | `z3-solver` | $\ge 5.0.0$ | **MIT** (Microsoft Research) | None | 🟢 Permissive (Compliant) |
@@ -445,14 +445,14 @@ AXIOM-AEGIS-VERITAS is engineered for frictionless redistribution under **BSL 1.
 
 ---
 
-## 💼 Licensing & Commercial Support
+## 📜 License & Community Support
 
 <div align="center">
 
 <br>
 
-Licensed under **Business Source License 1.1 (BSL 1.1)** — free for personal, educational, and non-commercial use (v1.0.0 – v1.x.x).  
-Commercial use, corporate deployment, or embedding into non-personal projects requires a **Commercial License ($4.20 USD)**.  
+Licensed under the **Apache License, Version 2.0 (Apache-2.0)**.
+Free for personal, academic, commercial, and enterprise production deployments.
 See the [LICENSE](LICENSE) file for complete terms.
 
 <br>
