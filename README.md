@@ -249,11 +249,74 @@ python main.py --cui
 ```
 *Opens full-screen dual-pane telemetry dashboard in standby mode, allowing real-time typing or drag-and-drop of file/directory paths to scan without auto-closing.*
 
-#### Launch Sovereign MCP Server (Model Context Protocol):
-```bash
-python axiom_mcp.py
+---
+
+### 2. Autonomous AI Agent Integration via MCP (Model Context Protocol)
+
+**AXIOM-AEGIS-VERITAS** includes a native **Model Context Protocol (MCP)** server (`axiom_mcp.py`), allowing autonomous AI coding assistants (such as **Google Antigravity**, **Claude Desktop**, and **Cursor**) to invoke 8-layer formal verification directly from conversational prompts.
+
+#### Available MCP Tools
+
+| Tool Name | Parameters | Description |
+|---|---|---|
+| `axiom_verify_file` | `file_path` (string, required) | Executes 8-layer formal verification pipeline on a single Python file, returning verification status, layer mask, and BLAKE2b cryptographic seal. |
+| `axiom_verify_workspace` | `workspace_path` (string, required) | Recursively audits an entire project workspace, returning total files, pass/fail counts, and enumerating defective files with their exact failed layers. |
+| `axiom_audit_receipt` | `file_path` (string), `seal_hash` (string) | Validates an existing verification receipt by recalculating the chained BLAKE2b hash against current AST state to prove non-tampering. |
+
+#### Setup Instructions
+
+##### 1. Google Antigravity
+Add to your global or project MCP configuration (`~/.gemini/config/mcp_config.json`):
+```json
+{
+  "mcpServers": {
+    "axiom-aegis": {
+      "command": "python",
+      "args": [
+        "L:/path/to/Axiom-Aegis-Veritas/axiom_mcp.py"
+      ]
+    }
+  }
+}
 ```
-*Provides JSON-RPC stdio interface exposing `axiom_verify_file`, `axiom_verify_workspace`, and `axiom_audit_receipt` for AI agent integration.*
+
+##### 2. Claude Desktop
+Add to your Claude Desktop configuration (`claude_desktop_config.json` via Settings $\to$ Developer $\to$ Edit Config):
+```json
+{
+  "mcpServers": {
+    "axiom-aegis-veritas": {
+      "command": "python",
+      "args": [
+        "L:\\path\\to\\Axiom-Aegis-Veritas\\axiom_mcp.py"
+      ]
+    }
+  }
+}
+```
+
+##### 3. Cursor IDE
+Add to `.cursor/mcp.json` in your project or global settings:
+```json
+{
+  "mcpServers": {
+    "axiom-aegis": {
+      "command": "python",
+      "args": [
+        "L:/path/to/Axiom-Aegis-Veritas/axiom_mcp.py"
+      ]
+    }
+  }
+}
+```
+
+#### Example Usage in AI Chat
+Once configured, you can directly command your AI assistant:
+> *"Audit `src/core/engine_kernel.py` using Axiom-Aegis to verify all 8 layers and check for race conditions."*
+
+The AI assistant will automatically invoke `axiom_verify_file` in the background and report verified invariants with cryptographic proof.
+
+---
 
 #### Sample Terminal Dashboard Output👾:
 
@@ -282,7 +345,7 @@ Layer: L7_Witness_Shard         2 witnesses generated   [PASS]
 
 ---
 
-### 2. CI/CD Automated Evaluator (`cli.py`)
+### 3. CI/CD Automated Evaluator (`cli.py`)
 `cli.py` is purpose-built for continuous integration pipelines (e.g. GitHub Actions, GitLab CI, local pre-commit hooks). It scans files or directories and exits with deterministic non-zero exit codes.
 
 #### Usage:
@@ -304,7 +367,7 @@ python cli.py src/ --verbose
 
 ---
 
-### 3. Programmatic Python API
+### 4. Programmatic Python API
 You can embed the verification engine directly into external Python tools or testing harnesses:
 
 ```python
@@ -328,7 +391,7 @@ else:
 
 ---
 
-### 4. Practical Walkthrough: Scanning External Codebases (e.g., `L:\Orthos-iDart`)
+### 5. Practical Walkthrough: Scanning External Codebases (e.g., `L:\Orthos-iDart`)
 
 <details>
 <summary><b>🔍 Click to expand: Practical External Repository Scanning Guide</b></summary>
