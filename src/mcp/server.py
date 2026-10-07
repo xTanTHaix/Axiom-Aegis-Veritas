@@ -247,6 +247,7 @@ class AxiomMCPServer:
             "is_complete_7layers": is_sealed,
             "seal_hash": seal_hash,
             "execution_time_sec": round(res.execution_time, 4),
+            "failures": list(res.failures),
             "missing_layers": missing_layers,
             "failure_reasons": failure_reasons,
             "layer_reports": {

@@ -268,6 +268,33 @@ class AttestationOracle:
             elif layer_id == "L6":
                 # Provenance Semiring / Hot Patcher: Valid patches or confidence
                 metrics["patcher_active"] = True
+                
+                # Check for detected bugs or confirmed defect verdict
+                detected_bugs: List[Dict[str, Any]] = []
+                if hasattr(layer_output, "get_detected_bugs"):
+                    detected_bugs = layer_output.get_detected_bugs()
+                elif isinstance(layer_output, dict):
+                    detected_bugs = layer_output.get("detected_bugs", [])
+
+                verdict = getattr(layer_output, "verdict", None)
+                if isinstance(layer_output, dict):
+                    verdict = layer_output.get("verdict", verdict)
+
+                metrics["detected_bugs_count"] = len(detected_bugs)
+                if detected_bugs or verdict == "CONFIRMED_DEFECT":
+                    bug_types = [b.get("type", "unknown") for b in detected_bugs] if detected_bugs else ["CONFIRMED_DEFECT"]
+                    metrics["defect_summary"] = bug_types
+                    digest = self.compute_artifact_digest(f"L6_DEFECT_{bug_types}")
+                    return LayerExecutionProof(
+                        layer_id=layer_id,
+                        layer_name=layer_name,
+                        status=LayerStatus.FAIL,
+                        execution_time_ms=duration_ms,
+                        artifact_digest=digest,
+                        metrics=metrics,
+                        failure_reason=f"Layer L6 detected semantic defect(s): {', '.join(bug_types)}",
+                    )
+
                 digest = self.compute_artifact_digest("L6_SEMIRING_HOTPATCH")
 
             elif layer_id == "L7":

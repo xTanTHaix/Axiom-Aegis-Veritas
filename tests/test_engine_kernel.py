@@ -384,3 +384,39 @@ class TestPipelineExceptions:
         err = LayerTimeoutError("L2", 30.0)
         repr_str = repr(err)
         assert "LayerTimeoutError" in repr_str
+
+
+# ─── Tests: Defect Interception & Soundness ─────────────────────────────────
+
+class TestDefectInterception:
+    """Adversarial tests ensuring semantic bugs fail pipeline verification."""
+
+    def test_pipeline_driver_fails_on_division_by_zero(self, tmp_path):
+        """Ensure code containing division by zero is flagged as FAIL, not PASS."""
+        buggy_file = tmp_path / "div_zero.py"
+        buggy_file.write_text("def compute(x: int) -> float:\n    return x / 0\n")
+
+        driver = PipelineDriver(file_path=buggy_file)
+        result = driver.run_pipeline()
+
+        assert result.success is False
+        assert len(result.failures) > 0
+        assert any("division_by_zero" in f.lower() or "division by zero" in f.lower() for f in result.failures)
+        assert result.attestation_seal is not None
+        assert result.attestation_seal.is_complete is False
+        assert "L6" in result.attestation_seal.missing_layers
+
+    def test_mcp_server_reports_defect_failure(self, tmp_path):
+        """Ensure MCP server reports VERIFICATION_FAILED with details for buggy file."""
+        from src.mcp.server import AxiomMCPServer
+        buggy_file = tmp_path / "empty_cmp.py"
+        buggy_file.write_text("def check(s: str) -> bool:\n    return s == ''\n")
+
+        server = AxiomMCPServer()
+        res = server.verify_file(str(buggy_file))
+
+        assert res["success"] is False
+        assert res["status"] == "VERIFICATION_FAILED"
+        assert res["is_complete_7layers"] is False
+        assert len(res["failures"]) > 0
+        assert "L6" in res["missing_layers"]

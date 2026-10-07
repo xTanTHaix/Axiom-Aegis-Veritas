@@ -182,15 +182,31 @@ class CIEvaluator:
             patcher = HotPatcher()
             patcher.analyze(file_path)
             semiring = ProvenanceSemiring()
+
+            # Dynamic evidence aggregation
             evidences = [
-                LayerDefectEvidence("L1", "OK", 0.0),
+                LayerDefectEvidence("L1", "FAIL" if not parser.merkle_root else "OK", 0.85 if not parser.merkle_root else 0.0) if 'parser' in locals() else LayerDefectEvidence("L1", "OK", 0.0),
                 LayerDefectEvidence("L2", "OK", 0.0),
                 LayerDefectEvidence("L3", "OK", 0.0),
             ]
+            detected_bugs = patcher.get_detected_bugs()
+            if detected_bugs:
+                evidences.append(LayerDefectEvidence("L6", "FAIL", 0.95))
+            else:
+                evidences.append(LayerDefectEvidence("L6", "OK", 0.0))
+
             content = file_path.read_text(encoding="utf-8", errors="ignore")
             prov_rep = semiring.evaluate(evidences, witness_prob=0.0, source_code=content)
             report = f"Confidence={prov_rep.defect_confidence:.2f}, Verdict={prov_rep.verdict}"
             self.results[f"{file_path.name}_L6"] = report
+
+            if detected_bugs or prov_rep.verdict == "CONFIRMED_DEFECT":
+                self.exit_code = self.EXIT_FAIL
+                for bug in detected_bugs:
+                    desc = bug.get("description", bug.get("type", "defect"))
+                    line = bug.get("line", "?")
+                    self.failures.append(f"L6: {file_path.name} line {line}: {desc}")
+
             self.progress.complete()
         except Exception as e:
             self.logger.log_error(f"L6 [{file_path.name}]: {e}")

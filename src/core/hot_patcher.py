@@ -1180,6 +1180,7 @@ class HotPatcher:
         # State
         self._analyzed_files: List[str] = []
         self._total_patches: int = 0
+        self._detected_bugs: List[Dict[str, Any]] = []
 
     def analyze(self, file_path: str) -> Dict[str, Any]:
         """Analyze a file through the hot patching pipeline.
@@ -1199,6 +1200,9 @@ class HotPatcher:
 
         self._analyzed_files.append(str(file_path))
 
+        # Detect bugs in the AST
+        self._detected_bugs = self._find_bugs(tree)
+
         # Step 1: Generate MCS
         self._generate_mcs(tree)
 
@@ -1213,6 +1217,7 @@ class HotPatcher:
             "mcs_generated": len(self._mcs_generator.get_mcs()),
             "patches_synthesized": self._total_patches,
             "edit_distances": self._edit_distances,
+            "detected_bugs": list(self._detected_bugs),
         }
 
     def _generate_mcs(self, tree: ast.Module) -> None:
@@ -1260,15 +1265,25 @@ class HotPatcher:
         # Pattern 2: Empty string comparison
         for node in ast.walk(tree):
             if isinstance(node, ast.Compare):
-                for op in node.ops:
-                    if isinstance(op, ast.Eq) or isinstance(op, ast.NotEq):
-                        if isinstance(node.left, ast.Constant) and node.left.value == "":
+                is_empty_cmp = False
+                # Check left
+                if isinstance(node.left, ast.Constant) and node.left.value == "":
+                    is_empty_cmp = True
+                # Check comparators
+                for comp in node.comparators:
+                    if isinstance(comp, ast.Constant) and comp.value == "":
+                        is_empty_cmp = True
+
+                if is_empty_cmp:
+                    for op in node.ops:
+                        if isinstance(op, (ast.Eq, ast.NotEq)):
                             bugs.append({
                                 "type": "empty_string_comparison",
                                 "line": node.lineno,
-                                "description": f"Empty string comparison: {astunparse(node.left)} {type(op).__name__} {astunparse(node.right)}",
+                                "description": f"Empty string comparison at line {node.lineno}",
                                 "severity": 1,
                             })
+                            break
 
         # Pattern 3: Unreachable code
         for node in ast.walk(tree):
@@ -1324,6 +1339,14 @@ class HotPatcher:
         """
         return self.ted.get_stats()
 
+    def get_detected_bugs(self) -> List[Dict[str, Any]]:
+        """Get list of bugs detected during analysis.
+
+        Returns:
+            List of detected bug dictionaries.
+        """
+        return list(self._detected_bugs)
+
     def get_report(self) -> Dict[str, Any]:
         """Get comprehensive report.
 
@@ -1335,6 +1358,7 @@ class HotPatcher:
             "mcs": self.get_mcs_stats(),
             "patches": self.get_patch_report(),
             "ted": self.get_ted_stats(),
+            "detected_bugs": self.get_detected_bugs(),
         }
 
 
@@ -1362,10 +1386,11 @@ def astunparse(node: ast.AST) -> str:
         op = type(node.op).__name__
         return f"{astunparse(node.left)} {op} {astunparse(node.right)}"
     elif isinstance(node, ast.Compare):
+        left_str = astunparse(node.left)
         parts = []
-        for left, op, right in zip(node.left, node.ops, node.comparators):
-            parts.append(f"{astunparse(left)} {type(op).__name__} {astunparse(right)}")
-        return " and ".join(parts)
+        for op, comp in zip(node.ops, node.comparators):
+            parts.append(f"{type(op).__name__} {astunparse(comp)}")
+        return f"{left_str} {' '.join(parts)}"
     elif isinstance(node, ast.Call):
         func = astunparse(node.func)
         args = ", ".join(astunparse(a) for a in node.args)

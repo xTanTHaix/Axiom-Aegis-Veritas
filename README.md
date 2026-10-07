@@ -42,7 +42,7 @@
 [![Formal Verification](https://img.shields.io/badge/formal-8--Layer%20Pipeline-6366F1?style=for-the-badge&logo=checkmarx&logoColor=white)](#-the-roadmap-of-the-hunt-8-layer-execution-pipeline)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D6?style=for-the-badge&logo=linux&logoColor=white)](#-platform-notes--technical-hardening)
 
-[![Tests Passing](https://img.shields.io/badge/tests-596%20passed-059669?style=for-the-badge&logo=pytest&logoColor=white)](#-the-kill-empirical-street--cluster-proofs)
+[![Tests Passing](https://img.shields.io/badge/tests-599%20passed-059669?style=for-the-badge&logo=pytest&logoColor=white)](#-the-kill-empirical-street--cluster-proofs)
 [![CI Multi-OS](https://img.shields.io/badge/CI-Ubuntu%20%7C%20Windows-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)](#)
 [![Supply Chain](https://img.shields.io/badge/dependencies-3%20Permissive%20Only-10B981?style=for-the-badge&logo=pypi&logoColor=white)](#️-license--dependency-governance)
 [![Zero Copyleft](https://img.shields.io/badge/copyleft-Zero%20LGPL%20%2F%20GPL-059669?style=for-the-badge&logo=shield&logoColor=white)](#️-license--dependency-governance)
@@ -552,6 +552,12 @@ All notable changes to the **AXIOM-AEGIS-VERITAS** formal verification engine ar
     - `axiom_audit_receipt`: Cryptographic receipt verifier proving execution integrity via BLAKE2b hash recalculation.
 
 #### 🐛 Defect Remediation & Bug Fixes
+- **Verification Pipeline Defect Blindspot Remediation (BUG-PY-044):**
+  - Diagnosed critical pipeline blindspot where `EngineKernel` and `cli.py` statically hardcoded `LayerDefectEvidence` to `OK (0.0)`, bypassing Layer 6 Provenance Semiring and causing `HotPatcher` detected bugs to be ignored.
+  - Implemented dynamic layer defect evidence fusion across L1–L5 and hooked `HotPatcher.get_detected_bugs()`, marking `LayerDefectEvidence("L6", "FAIL", 0.95)` and setting `PipelineResult.success = False` when semantic bugs are found.
+  - Hardened `AttestationOracle.audit_layer_output("L6", ...)` to inspect detected bugs and `CONFIRMED_DEFECT` verdicts, issuing `LayerStatus.FAIL` and preventing unearned Layer 8 cryptographic seal attestation.
+  - Fixed `astunparse()` traversal for multi-comparator `ast.Compare` nodes and enhanced `_find_bugs()` in `HotPatcher` to detect bidirectional empty string comparisons.
+  - Enhanced MCP Server `verify_file` response payload to include explicit `failures` lists and reject verification on defective files.
 - **Dual SMT Consensus Solver Fallback Hardening:**
   - Diagnosed unlinked solver environment issues where `z3-solver` was absent in root interpreters, causing consensus degradation.
   - Hardened `dual_solver_consensus.py` with safe module import guarding, informative warning traces, and fallback mechanisms ensuring deterministic outcomes across bare and virtual environments.
@@ -565,8 +571,9 @@ All notable changes to the **AXIOM-AEGIS-VERITAS** formal verification engine ar
   - Resolved potential standard I/O pollution by guarding MCP log outputs against `sys.stdout`, directing all runtime diagnostic telemetry strictly to `sys.stderr` to prevent JSON-RPC protocol packet framing errors.
 
 #### 🧪 Verification & Empirical Proofs
-- Expanded test suite from 573 to **596 passed tests** (100% green in ~5.5s) covering:
-  - Unit tests for Layer 8 Bitmask Attestation, Sealed Hash Synthesis, and non-blocking failure reporting (`tests/test_attestation_oracle.py`).
+- Expanded test suite from 573 to **599 passed tests** (100% green in ~5.7s) covering:
+  - Adversarial defect interception and pipeline soundness tests (`tests/test_engine_kernel.py`).
+  - Unit tests for Layer 8 Bitmask Attestation, Sealed Hash Synthesis, and non-blocking failure reporting (`tests/test_layer8_attestation.py`).
   - Tactical Dashboard telemetry sampling, ANSI alignment, Pytest summary bar, and standby frame invariants (`tests/test_tactical_dashboard.py`).
   - MCP JSON-RPC protocol serialization and tool dispatcher execution (`tests/test_mcp_server.py`).
 - Completed AST-level static verification via **LIPA** (Local Ingress Pre-flight Auditor) with 0 syntax or topology defects.

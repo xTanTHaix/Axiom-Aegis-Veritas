@@ -370,16 +370,51 @@ class PipelineDriver:
             patcher = HotPatcher()
             patcher.analyze(self.file_path)
             semiring = ProvenanceSemiring()
-            evidences = [
-                LayerDefectEvidence("L1", "OK", 0.0),
-                LayerDefectEvidence("L2", "OK", 0.0),
-                LayerDefectEvidence("L3", "OK", 0.0),
-            ]
+
+            # Dynamic evidence aggregation from preceding layers and HotPatcher
+            evidences = []
+
+            # L1 evidence
+            l1_status = proofs.get("L1").status if "L1" in proofs else LayerStatus.FAIL
+            evidences.append(
+                LayerDefectEvidence("L1", "FAIL" if l1_status != LayerStatus.PASS else "OK", 0.85 if l1_status != LayerStatus.PASS else 0.0)
+            )
+
+            # L2 evidence
+            l2_status = proofs.get("L2").status if "L2" in proofs else LayerStatus.FAIL
+            evidences.append(
+                LayerDefectEvidence("L2", "FAIL" if l2_status != LayerStatus.PASS else "OK", 0.90 if l2_status != LayerStatus.PASS else 0.0)
+            )
+
+            # L3 evidence
+            l3_status = proofs.get("L3").status if "L3" in proofs else LayerStatus.FAIL
+            evidences.append(
+                LayerDefectEvidence("L3", "FAIL" if l3_status != LayerStatus.PASS else "OK", 0.98 if l3_status != LayerStatus.PASS else 0.0)
+            )
+
+            # L6 hot patcher bugs evidence
+            detected_bugs = patcher.get_detected_bugs()
+            if detected_bugs:
+                evidences.append(
+                    LayerDefectEvidence("L6", "FAIL", 0.95)
+                )
+            else:
+                evidences.append(
+                    LayerDefectEvidence("L6", "OK", 0.0)
+                )
+
             content = self.file_path.read_text(encoding="utf-8", errors="ignore")
             prov_rep = semiring.evaluate(evidences, witness_prob=0.0, source_code=content)
             self.results.patch_report = f"Confidence={prov_rep.defect_confidence:.2f}, Verdict={prov_rep.verdict}"
             self.results.add_layer_result("L6", patcher)
             proofs["L6"] = oracle.audit_layer_output("L6", patcher, duration_ms=(time.time() - t0) * 1000)
+
+            if detected_bugs or prov_rep.verdict == "CONFIRMED_DEFECT":
+                self.results.success = False
+                for bug in detected_bugs:
+                    desc = bug.get("description", bug.get("type", "defect"))
+                    line = bug.get("line", "?")
+                    self.results.add_failure("L6", f"Defect detected at line {line}: {desc}")
         except Exception as e:
             logger.error(f"Layer L6 failure: {e}")
             proofs["L6"] = LayerExecutionProof(
