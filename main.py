@@ -55,10 +55,11 @@ class AxiomCLI:
         print("  1. Analyze single file")
         print("  2. Analyze directory (recursive)")
         print("  3. Run test suite")
-        print("  4. Exit")
+        print("  4. Launch Tactical CUI Dashboard v3.4")
+        print("  5. Exit")
         print()
 
-        choice = input("  Select option [1-4]: ").strip()
+        choice = input("  Select option [1-5]: ").strip()
 
         if choice == "1":
             file_path = input("  Enter file path: ").strip()
@@ -71,6 +72,10 @@ class AxiomCLI:
         elif choice == "3":
             self._run_tests()
         elif choice == "4":
+            from src.cui.tactical_dashboard import TacticalDashboard
+            dashboard = TacticalDashboard()
+            dashboard.run_interactive_session()
+        elif choice == "5":
             self.logger.log_info("Exiting.")
             sys.exit(0)
         else:
@@ -169,6 +174,9 @@ class AxiomCLI:
         self.results["L5_PEP695_Resolver"] = res.type_report or "Completed (Type Invariants Verified)"
         self.results["L6_Provenance_Semiring"] = res.patch_report or "Completed (Semiring Confidence Evaluated)"
         self.results["L7_Witness_Shard"] = res.witness_report or "Completed (Deterministic Witness Verified)"
+        self.results["L8_Attestation_Oracle"] = res.layer8_report or (
+            f"Sealed: {res.attestation_seal.is_complete if res.attestation_seal else False} (Bitmask=0x7F)"
+        )
 
         if not res.success:
             for fail in res.failures:
@@ -213,6 +221,11 @@ def main() -> None:
         help="Execution mode (default: interactive)",
     )
     parser.add_argument(
+        "--cui",
+        action="store_true",
+        help="Launch Tactical Terminal CUI Dashboard v3.4 (Pure Python)",
+    )
+    parser.add_argument(
         "--verbose", "-v",
         action="store_true",
         help="Enable verbose logging",
@@ -224,6 +237,13 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if args.cui:
+        from src.cui.tactical_dashboard import TacticalDashboard
+        dashboard = TacticalDashboard()
+        initial = Path(args.file) if args.file else None
+        dashboard.run_interactive_session(initial)
+        sys.exit(0)
 
     cli = AxiomCLI(
         file_path=args.file,

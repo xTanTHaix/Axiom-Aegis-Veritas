@@ -1,7 +1,7 @@
 """
-AXIOM-AEGIS-VERITAS Engine Kernel — L1-L7 Orchestration Coordinator.
+AXIOM-AEGIS-VERITAS Engine Kernel — L1-L8 Orchestration Coordinator.
 
-Integrates all 7 layers of the verification pipeline:
+Integrates all 8 layers of the verification pipeline:
 - L1: CST Merkle Cache (structural analysis)
 - L2: Octagon Domain (interval analysis)
 - L3: Dual SMT Consensus (constraint solving)
@@ -9,9 +9,10 @@ Integrates all 7 layers of the verification pipeline:
 - L5: PEP 695 Resolver (type resolution)
 - L6: Hot Patcher (MCS & patch synthesis)
 - L7: Repro Synthesizer (witness generation)
+- L8: Attestation Oracle (formal completeness & cryptographic seal)
 
 Provides:
-- PipelineDriver — orchestrates all 7 layers sequentially
+- PipelineDriver — orchestrates all 8 layers sequentially
 - PipelineResult — aggregates results from all layers
 - EngineKernel — main coordinator class
 """
@@ -36,6 +37,14 @@ from typing import (
     Type,
     TypeVar,
     Union,
+)
+
+from src.core.attestation_oracle import (
+    AttestationOracle,
+    AttestationSeal,
+    AttestationVerdict,
+    LayerExecutionProof,
+    LayerStatus,
 )
 
 logger = logging.getLogger(__name__)
@@ -123,6 +132,8 @@ class PipelineResult:
         type_report: Result from L5 (if available).
         patch_report: Result from L6 (if available).
         witness_report: Result from L7 (if available).
+        attestation_seal: Cryptographic completeness seal from L8 (if available).
+        layer8_report: Summary string from L8 attestation.
     """
 
     file_path: str
@@ -138,12 +149,15 @@ class PipelineResult:
     type_report: Optional[str] = None
     patch_report: Optional[str] = None
     witness_report: Optional[str] = None
+    attestation_seal: Optional[AttestationSeal] = None
+    layer8_report: Optional[str] = None
 
     def __repr__(self) -> str:
         return (
             f"PipelineResult(file={self.file_path}, "
             f"success={self.success}, "
             f"failures={len(self.failures)}, "
+            f"sealed={self.attestation_seal.is_complete if self.attestation_seal else False}, "
             f"time={self.execution_time:.2f}s)"
         )
 
@@ -155,7 +169,9 @@ class PipelineResult:
             "failures": self.failures,
             "warnings": self.warnings,
             "execution_time": self.execution_time,
-            "layer_results": self.layer_results,
+            "layer_results": {k: repr(v) for k, v in self.layer_results.items()},
+            "attestation_seal": self.attestation_seal.to_dict() if self.attestation_seal else None,
+            "layer8_report": self.layer8_report,
         }
 
     def add_layer_result(self, layer_name: str, result: Any) -> None:
@@ -231,23 +247,63 @@ class PipelineDriver:
             self.results.execution_time = time.time() - self._start_time
             return self.results
 
+        proofs: Dict[str, LayerExecutionProof] = {}
+        oracle = AttestationOracle()
+        file_bytes = b""
+
         try:
-            # Layer 1: CST Merkle Cache
+            file_bytes = self.file_path.read_bytes()
+        except Exception as e:
+            err_msg = f"Failed to read file bytes: {e}"
+            logger.error(err_msg)
+            self.results.add_failure("FILE_IO", err_msg)
+            self.results.execution_time = time.time() - self._start_time
+            return self.results
+
+        # Layer 1: CST Merkle Cache
+        t0 = time.time()
+        try:
             from src.core.cst_merkle_cache import CSTParser
             parser = CSTParser(self.file_path)
             p_ok = parser.parse()
             if p_ok and parser.merkle_root:
                 self.results.merkle_root = parser.get_merkle_root_hex()
             self.results.add_layer_result("L1", parser)
+            proofs["L1"] = oracle.audit_layer_output("L1", parser, duration_ms=(time.time() - t0) * 1000)
+        except Exception as e:
+            logger.error(f"Layer L1 failure: {e}")
+            proofs["L1"] = LayerExecutionProof(
+                layer_id="L1",
+                layer_name="CST Merkle Cache",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L1 execution exception: {str(e)}",
+            )
 
-            # Layer 2: Octagon Domain
+        # Layer 2: Octagon Domain
+        t0 = time.time()
+        try:
             from src.core.octagon_domain import OctagonDomain
             octagon = OctagonDomain(self.file_path)
             octagon.analyze()
             self.results.octagon_summary = str(octagon.get_summary())
             self.results.add_layer_result("L2", octagon)
+            proofs["L2"] = oracle.audit_layer_output("L2", octagon, duration_ms=(time.time() - t0) * 1000)
+        except Exception as e:
+            logger.error(f"Layer L2 failure: {e}")
+            proofs["L2"] = LayerExecutionProof(
+                layer_id="L2",
+                layer_name="Octagon DBM Closure",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L2 execution exception: {str(e)}",
+            )
 
-            # Layer 3: Dual SMT Consensus
+        # Layer 3: Dual SMT Consensus
+        t0 = time.time()
+        try:
             from src.core.dual_solver_consensus import DualSolverConsensus
             consensus = DualSolverConsensus()
             c_status, c_conf, _ = consensus.evaluate_consensus(
@@ -256,20 +312,59 @@ class PipelineDriver:
             )
             self.results.consensus_result = f"{c_status} (confidence={c_conf:.2f})"
             self.results.add_layer_result("L3", consensus)
+            proofs["L3"] = oracle.audit_layer_output("L3", consensus, duration_ms=(time.time() - t0) * 1000)
+        except Exception as e:
+            logger.error(f"Layer L3 failure: {e}")
+            proofs["L3"] = LayerExecutionProof(
+                layer_id="L3",
+                layer_name="Dual SMT Consensus",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L3 execution exception: {str(e)}",
+            )
 
-            # Layer 4: DPOR Scheduler
+        # Layer 4: DPOR Scheduler
+        t0 = time.time()
+        try:
             from src.core.dpor_scheduler import DeterministicVirtualScheduler
             scheduler = DeterministicVirtualScheduler(num_workers=2)
             self.results.race_report = "DPOR verified: 0 race interleavings detected"
             self.results.add_layer_result("L4", scheduler)
+            proofs["L4"] = oracle.audit_layer_output("L4", scheduler, duration_ms=(time.time() - t0) * 1000)
+        except Exception as e:
+            logger.error(f"Layer L4 failure: {e}")
+            proofs["L4"] = LayerExecutionProof(
+                layer_id="L4",
+                layer_name="DPOR Virtual Scheduler",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L4 execution exception: {str(e)}",
+            )
 
-            # Layer 5: PEP 695 Resolver
+        # Layer 5: PEP 695 Resolver
+        t0 = time.time()
+        try:
             from src.core.pep695_resolver import DeepTypeResolver
             resolver = DeepTypeResolver()
             self.results.type_report = "PEP 695 type invariants verified"
             self.results.add_layer_result("L5", resolver)
+            proofs["L5"] = oracle.audit_layer_output("L5", resolver, duration_ms=(time.time() - t0) * 1000)
+        except Exception as e:
+            logger.error(f"Layer L5 failure: {e}")
+            proofs["L5"] = LayerExecutionProof(
+                layer_id="L5",
+                layer_name="PEP 695 Type Invariants",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L5 execution exception: {str(e)}",
+            )
 
-            # Layer 6: Provenance Semiring & Hot Patcher
+        # Layer 6: Provenance Semiring & Hot Patcher
+        t0 = time.time()
+        try:
             from src.core.hot_patcher import HotPatcher
             from src.core.provenance_semiring import ProvenanceSemiring, LayerDefectEvidence
             patcher = HotPatcher()
@@ -284,21 +379,65 @@ class PipelineDriver:
             prov_rep = semiring.evaluate(evidences, witness_prob=0.0, source_code=content)
             self.results.patch_report = f"Confidence={prov_rep.defect_confidence:.2f}, Verdict={prov_rep.verdict}"
             self.results.add_layer_result("L6", patcher)
+            proofs["L6"] = oracle.audit_layer_output("L6", patcher, duration_ms=(time.time() - t0) * 1000)
+        except Exception as e:
+            logger.error(f"Layer L6 failure: {e}")
+            proofs["L6"] = LayerExecutionProof(
+                layer_id="L6",
+                layer_name="Provenance Semiring",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L6 execution exception: {str(e)}",
+            )
 
-            # Layer 7: Repro Synthesizer
+        # Layer 7: Repro Synthesizer
+        t0 = time.time()
+        try:
             from src.core.repro_synthesizer import ReproSynthesizer
             repro = ReproSynthesizer(file_path=str(self.file_path))
             witnesses = repro.generate()
             self.results.witness_report = f"Synthesized {len(witnesses)} witness artifacts"
             self.results.add_layer_result("L7", repro)
-
+            proofs["L7"] = oracle.audit_layer_output("L7", repro, duration_ms=(time.time() - t0) * 1000)
         except Exception as e:
-            logger.error(f"Pipeline execution error: {e}")
-            self.results.add_failure("PIPELINE", str(e))
+            logger.error(f"Layer L7 failure: {e}")
+            proofs["L7"] = LayerExecutionProof(
+                layer_id="L7",
+                layer_name="Witness Repro Sandbox",
+                status=LayerStatus.FAIL,
+                execution_time_ms=(time.time() - t0) * 1000,
+                artifact_digest="0" * 64,
+                failure_reason=f"Layer L7 execution exception: {str(e)}",
+            )
 
-        finally:
-            self.results.execution_time = time.time() - self._start_time
+        # Layer 8: Attestation Oracle (Completeness & Cryptographic Seal)
+        t0 = time.time()
+        try:
+            seal = oracle.evaluate_completeness(
+                file_path=self.file_path,
+                file_bytes=file_bytes,
+                proofs=proofs,
+            )
+            self.results.attestation_seal = seal
+            self.results.add_layer_result("L8", seal)
+            self.results.layer8_report = (
+                f"Verdict={seal.verdict.value}, Bitmask=0x{seal.bitmask:02X}, Complete={seal.is_complete}"
+            )
 
+            if not seal.is_complete:
+                self.results.success = False
+                for missing_layer in seal.missing_layers:
+                    reason = seal.failure_reasons.get(
+                        missing_layer,
+                        f"Layer {missing_layer} failed completeness verification."
+                    )
+                    self.results.add_failure(missing_layer, reason)
+        except Exception as e:
+            logger.error(f"Layer L8 failure: {e}")
+            self.results.add_failure("L8", f"Layer L8 Attestation Oracle exception: {str(e)}")
+
+        self.results.execution_time = time.time() - self._start_time
         logger.info(f"Pipeline completed in {self.results.execution_time:.2f}s")
         return self.results
 

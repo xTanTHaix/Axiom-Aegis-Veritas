@@ -1,6 +1,6 @@
 # =============================================================================
 # AXIOM-AEGIS-VERITAS — Production Dependencies
-# All dependencies are 100% Permissive (MIT / BSD) and BSL 1.1 Compliant
+# All dependencies are 100% Permissive (MIT / BSD / Apache-2.0)
 # Zero Copyleft (No GPL, No LGPL, No AGPL, No MPL, No Non-Commercial Clauses)
 # =============================================================================
 
@@ -12,5 +12,4 @@ z3-solver>=5.0.0
 
 # Terminal UI & Cross-Platform ANSI Color Output (BSD-3-Clause)
 colorama>=0.4.6
-
-libcst
+psutil>=5.9.0

@@ -655,7 +655,15 @@ class CounterfactualPatchSynthesizer:
                 )
 
         elif bug_type == "unused_variable":
-            var_name = bug.get("node", {}).get("id", "var")
+            node_val = bug.get("node")
+            if isinstance(node_val, ast.Name):
+                var_name = node_val.id
+            elif isinstance(node_val, dict):
+                var_name = node_val.get("id", "var")
+            elif hasattr(node_val, "id"):
+                var_name = getattr(node_val, "id", "var")
+            else:
+                var_name = "var"
             return Patch(
                 original=f"  {var_name} = unused",
                 patched=f"  del {var_name}",

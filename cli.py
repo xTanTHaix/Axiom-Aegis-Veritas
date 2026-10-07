@@ -213,6 +213,45 @@ class CIEvaluator:
             self.exit_code = self.EXIT_FAIL
             self.progress.complete()
 
+        # Layer 8: Attestation Oracle
+        self.progress.start("L8", "Attestation Oracle & Seal")
+        try:
+            from src.core.attestation_oracle import (
+                AttestationOracle,
+                LayerExecutionProof,
+                LayerStatus,
+            )
+            oracle = AttestationOracle()
+            file_bytes = file_path.read_bytes()
+
+            proofs = {
+                "L1": oracle.audit_layer_output("L1", parser if 'parser' in locals() else None),
+                "L2": oracle.audit_layer_output("L2", domain if 'domain' in locals() else None),
+                "L3": oracle.audit_layer_output("L3", consensus if 'consensus' in locals() else None),
+                "L4": oracle.audit_layer_output("L4", scheduler if 'scheduler' in locals() else None),
+                "L5": oracle.audit_layer_output("L5", resolver if 'resolver' in locals() else None),
+                "L6": oracle.audit_layer_output("L6", patcher if 'patcher' in locals() else None),
+                "L7": oracle.audit_layer_output("L7", synthesizer if 'synthesizer' in locals() else None),
+            }
+
+            seal = oracle.evaluate_completeness(file_path, file_bytes, proofs)
+            self.results[f"{file_path.name}_L8"] = (
+                f"Bitmask=0x{seal.bitmask:02X}, Complete={seal.is_complete}, Seal={seal.seal_hash[:16]}..."
+            )
+
+            if not seal.is_complete:
+                for missing_l in seal.missing_layers:
+                    reason = seal.failure_reasons.get(missing_l, f"Layer {missing_l} failed completeness verification.")
+                    self.failures.append(f"L8: {file_path.name}: {reason}")
+                self.exit_code = self.EXIT_FAIL
+
+            self.progress.complete()
+        except Exception as e:
+            self.logger.log_error(f"L8 [{file_path.name}]: {e}")
+            self.failures.append(f"L8: {file_path.name}: {e}")
+            self.exit_code = self.EXIT_FAIL
+            self.progress.complete()
+
     def _print_ci_report(self) -> None:
         """Print CI/CD structured report"""
         elapsed = self.end_time - self.start_time

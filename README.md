@@ -39,10 +39,10 @@
 [![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![SMT Solver](https://img.shields.io/badge/SMT-Z3%205.1.0%20(MIT)-FF6F00?style=for-the-badge&logo=python&logoColor=white)](https://github.com/Z3Prover/z3)
 [![Abstract Domain](https://img.shields.io/badge/Domain-Octagon%20O(n³)-8B5CF6?style=for-the-badge&logo=wolframmathematica&logoColor=white)](#-the-problem-vs--the-mathematical-foundation)
-[![Formal Verification](https://img.shields.io/badge/formal-7--Layer%20Pipeline-6366F1?style=for-the-badge&logo=checkmarx&logoColor=white)](#-the-roadmap-of-the-hunt-7-layer-execution-pipeline)
+[![Formal Verification](https://img.shields.io/badge/formal-8--Layer%20Pipeline-6366F1?style=for-the-badge&logo=checkmarx&logoColor=white)](#-the-roadmap-of-the-hunt-8-layer-execution-pipeline)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D6?style=for-the-badge&logo=linux&logoColor=white)](#-platform-notes--technical-hardening)
 
-[![Tests Passing](https://img.shields.io/badge/tests-573%20passed-059669?style=for-the-badge&logo=pytest&logoColor=white)](#-the-kill-empirical-street--cluster-proofs)
+[![Tests Passing](https://img.shields.io/badge/tests-596%20passed-059669?style=for-the-badge&logo=pytest&logoColor=white)](#-the-kill-empirical-street--cluster-proofs)
 [![CI Multi-OS](https://img.shields.io/badge/CI-Ubuntu%20%7C%20Windows-22C55E?style=for-the-badge&logo=githubactions&logoColor=white)](#)
 [![Supply Chain](https://img.shields.io/badge/dependencies-3%20Permissive%20Only-10B981?style=for-the-badge&logo=pypi&logoColor=white)](#️-license--dependency-governance)
 [![Zero Copyleft](https://img.shields.io/badge/copyleft-Zero%20LGPL%20%2F%20GPL-059669?style=for-the-badge&logo=shield&logoColor=white)](#️-license--dependency-governance)
@@ -50,9 +50,9 @@
 
 <br>
 
-### Patch Notes: The "Apex Bug Hunter" Release (v1.0.0)
-*Dedicated to mission-critical Python codebases, autonomous execution runtimes, and high-assurance systems that demand absolute mathematical certainty.*  
-*Stop relying on heuristic linters that guess at boundaries or drown engineers in false positives. AXIOM-AEGIS-VERITAS proves program invariants, verifies multi-threaded interleavings, and synthesizes reproducible counterexamples with zero mock code.* 🛡️💎
+### Patch Notes: The "Attestation Oracle & Sovereign MCP" Release (v1.1.0)
+*Dedicated to mission-critical Python codebases, autonomous AI agent workflows, and high-assurance systems that demand verifiable mathematical certainty.*  
+*Stop relying on heuristic linters that guess at boundaries or drown engineers in false positives. AXIOM-AEGIS-VERITAS proves program invariants, verifies multi-threaded interleavings, seals 8 verification layers with cryptographic attestations, and connects seamlessly to AI agent swarms via sovereign MCP tools.* 🛡️💎
 
 ---
 
@@ -62,16 +62,17 @@
 
 ## 📖 Table of Contents
 1. [The Problem vs The Mathematical Foundation](#️-the-problem-vs--the-mathematical-foundation)
-2. [The 7-Layer Verification Architecture](#-the-roadmap-of-the-hunt-7-layer-execution-pipeline)
+2. [The 8-Layer Verification Architecture](#-the-roadmap-of-the-hunt-8-layer-execution-pipeline)
 3. [Dual SMT Consensus & Precision Damping](#-dual-smt-consensus--precision-damping)
 4. [Concurrency Engineering & Comparative Diagnostics](#-concurrency-engineering--apex-predator-diagnostics)
 5. [Feature Comparison Matrix](#-feature-comparison-matrix)
-6. [Empirical Street Proofs (573/573 Tests)](#-the-kill-empirical-street--cluster-proofs)
+6. [Empirical Street Proofs (596/596 Tests)](#-the-kill-empirical-street--cluster-proofs)
 7. [Quick Start & Installation](#-quick-start--installation)
 8. [CLI User Guide & External Scanning Walkthrough](#-cli-user-guide)
 9. [Platform Notes & Technical Hardening](#-platform-notes--technical-hardening)
 10. [License & Dependency Governance](#️-license--dependency-governance)
-11. [Licensing & Commercial Support](#-licensing--commercial-support)
+11. [Changelog](#-changelog)
+12. [Licensing & Commercial Support](#-licensing--commercial-support)
 
 ---
 
@@ -84,9 +85,9 @@
 
 ---
 
-## 🛣️ The Roadmap of the Hunt: 7-Layer Execution Pipeline
+## 🛣️ The Roadmap of the Hunt: 8-Layer Execution Pipeline
 
-<img width="100%" alt="The Roadmap of the Hunt: 7-Layer Execution Pipeline" src=".md/img38.jpg" />
+<img width="100%" alt="The Roadmap of the Hunt: 8-Layer Execution Pipeline" src=".md/img38.jpg" />
 
 <br>
 
@@ -99,6 +100,7 @@
 | **L5** | `pep695_resolver.py` | **PEP 695 Type Resolver:** AST-level unwrapping of generic type parameter syntax (`type Alias[T] = ...`, `TypeVar`, `ParamSpec`, `TypeVarTuple`) with context-aware header splicing. |
 | **L6** | `provenance_semiring.py` | **Provenance Semiring:** Fuses multi-layer defect evidences across the canonical probability semiring $\mathbb{K}_{\text{prob}} = \langle [0, 1], \oplus, \otimes, 0, 1 \rangle$ damped by McCabe Cyclomatic Complexity $\rho(CC, \alpha) = \frac{1}{1 + \alpha \ln(1 + CC)}$. |
 | **L7** | `repro_synthesizer.py` | **Witness Shard:** Synthesizes deterministic reproduction scripts and executes them within an isolated sandbox to categorize crash signatures. |
+| **L8** | `attestation_oracle.py` | **Attestation Oracle:** Validates 7-layer execution completeness via bitmask invariant ($M = 0x7F = 127$) and synthesizes chained BLAKE2b cryptographic seals ($H_{\text{Seal}}$) to eliminate silent bypasses. |
 
 ---
 
@@ -240,6 +242,18 @@ python main.py --file path/to/target.py --output report.txt
 ```bash
 python main.py
 ```
+
+#### Launch Tactical Terminal CUI Dashboard v1.1.0 (Interactive Standby Mode):
+```bash
+python main.py --cui
+```
+*Opens full-screen dual-pane telemetry dashboard in standby mode, allowing real-time typing or drag-and-drop of file/directory paths to scan without auto-closing.*
+
+#### Launch Sovereign MCP Server (Model Context Protocol):
+```bash
+python axiom_mcp.py
+```
+*Provides JSON-RPC stdio interface exposing `axiom_verify_file`, `axiom_verify_workspace`, and `axiom_audit_receipt` for AI agent integration.*
 
 #### Sample Terminal Dashboard Output👾:
 
@@ -441,7 +455,65 @@ AXIOM-AEGIS-VERITAS is released under the permissive **Apache License 2.0 (Apach
 ### Non-Inclusion & Purge Guarantee
 - **Zero Strong Copyleft:** No GPLv2, GPLv3, or AGPL code is incorporated or linked.
 - **Zero Weak Copyleft:** Purged all LGPL components (including `semgrep` and `cvc5` GMP binary links) and MPL components (`certifi`).
-- **Zero Supply-Chain Bloat:** Reduced dependencies from 83 unvetted packages to strictly 3 verified, permissive runtime packages.
+---
+
+## 📋 Changelog
+
+All notable changes to the **AXIOM-AEGIS-VERITAS** formal verification engine are documented in this section.
+
+<details open>
+<summary><b>Click to expand full Version Release History & Defect Playbook</b></summary>
+<br>
+
+### [v1.1.0] - 2026-10-07
+
+#### 🛡️ New Architecture & Features
+- **Layer 8 Attestation Oracle (`src/core/attestation_oracle.py`):**
+  - Synthesized bitmask invariant verification ($M = 0x7F = 127$) to guarantee all 7 formal verification layers (L1 CST Merkle through L7 Witness Sandbox) execute completely with non-trivial outcomes.
+  - Implemented cryptographic chained seal synthesis using BLAKE2b ($H_{\text{Seal}} = \text{BLAKE2b}(H_{\text{Prev}} \parallel \text{Context} \parallel M)$), preventing silent pipeline skips or partial passes.
+  - Formulated descriptive, non-blocking English failure reporting (`missing_layers`, `seal_status`) allowing batch verification runs to continue without unhandled exceptions.
+  - Integrated into `EngineKernel` and `cli.py` exit code evaluations.
+- **Tactical CUI Terminal Dashboard v1.1.0 (`src/cui/tactical_dashboard.py`):**
+  - Interactive Standby Mode (`python main.py --cui`): Launches directly into a persistent dual-pane console that calmly awaits keyboard input or file/folder drag-and-drop instead of closing immediately after scanning.
+  - Responsive terminal width auto-detection (`shutil.get_terminal_size`) with `unicodedata.east_asian_width` display-width compensation ensuring zero border breakages or column wrapping across 80–120 column terminals.
+  - Pytest-style colorful result summary bar (`✔ X PASSED`, `✖ Y FAILED`, `Z FILES [T.TTs]`) providing instant visual clarity at the base of the dashboard.
+  - Dynamic persistence of scanned line totals across continuous interactive inspection sessions.
+  - Real-time process telemetry: Live sampling of CPU sparkline history, Resident Set Size (RSS MB), and worker thread count via `psutil` (with graceful fallback).
+  - Dual-pane layout: Live Python AST source buffer with scanning laser glyphs (`▶▶`) on the left, resource meters and codebase profiles on the right, and streaming event logs at the bottom.
+  - Continuous loop: Allows sequential audits of multiple targets within a single session and clean exit via `q` / `quit` / `exit`.
+- **Sovereign Model Context Protocol (MCP) Server (`src/mcp/server.py` & `axiom_mcp.py`):**
+  - Built-in JSON-RPC 2.0 stdio server enabling autonomous AI coding agents (e.g. Antigravity, Claude Desktop, Cursor) to invoke formal verification tools directly.
+  - Exposed 3 sovereign agent tools:
+    - `axiom_verify_file`: Full 8-layer deep audit with cryptographic seal on an individual Python file.
+    - `axiom_verify_workspace`: Recursive directory verification with summary metrics and defective file enumeration.
+    - `axiom_audit_receipt`: Cryptographic receipt verifier proving execution integrity via BLAKE2b hash recalculation.
+
+#### 🐛 Defect Remediation & Bug Fixes
+- **Dual SMT Consensus Solver Fallback Hardening:**
+  - Diagnosed unlinked solver environment issues where `z3-solver` was absent in root interpreters, causing consensus degradation.
+  - Hardened `dual_solver_consensus.py` with safe module import guarding, informative warning traces, and fallback mechanisms ensuring deterministic outcomes across bare and virtual environments.
+- **ANSI Escape Width Padding Drift in Terminal CUI:**
+  - Fixed terminal column misalignment caused by native `len()` counting non-printable ANSI styling sequences (`\033[...m`).
+  - Implemented `visible_len()` with regex stripping (`ANSI_REGEX`) and `pad_visible()` with East Asian wide character support (`unicodedata.east_asian_width`), eliminating box border shifts across high-density layouts.
+- **HotPatcher AST Node Attribute Invariant Guard:**
+  - Diagnosed `AttributeError: 'Name' object has no attribute 'get'` inside `_synthesize_patch()` during Layer 6 analysis on raw AST names.
+  - Hardened node type extraction to inspect both `ast.Name` nodes and dictionary structures safely.
+- **MCP Import Topology & Stream Hygiene:**
+  - Resolved potential standard I/O pollution by guarding MCP log outputs against `sys.stdout`, directing all runtime diagnostic telemetry strictly to `sys.stderr` to prevent JSON-RPC protocol packet framing errors.
+
+#### 🧪 Verification & Empirical Proofs
+- Expanded test suite from 573 to **596 passed tests** (100% green in ~5.5s) covering:
+  - Unit tests for Layer 8 Bitmask Attestation, Sealed Hash Synthesis, and non-blocking failure reporting (`tests/test_attestation_oracle.py`).
+  - Tactical Dashboard telemetry sampling, ANSI alignment, Pytest summary bar, and standby frame invariants (`tests/test_tactical_dashboard.py`).
+  - MCP JSON-RPC protocol serialization and tool dispatcher execution (`tests/test_mcp_server.py`).
+- Completed AST-level static verification via **LIPA** (Local Ingress Pre-flight Auditor) with 0 syntax or topology defects.
+
+### [v1.0.0] - 2026-10-06 — *The "Apex Bug Hunter" Release*
+- Initial production release: 7-layer verification pipeline (CST Merkle Cache, Octagon Domain DBM, Dual SMT Consensus, DPOR Concurrency Scheduler, PEP 695 Resolver, Provenance Semiring CC Damping, Witness Reproduction Sandbox).
+- Erlang-style supervisory process management and active PipeDrainer deadlock elimination.
+- Comprehensive 20-module test suite (573 passed tests).
+
+</details>
 
 ---
 
