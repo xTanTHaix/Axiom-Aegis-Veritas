@@ -1267,11 +1267,11 @@ class HotPatcher:
             if isinstance(node, ast.Compare):
                 is_empty_cmp = False
                 # Check left
-                if isinstance(node.left, ast.Constant) and node.left.value == "":
+                if isinstance(node.left, ast.Constant) and isinstance(node.left.value, str) and len(node.left.value) == 0:
                     is_empty_cmp = True
                 # Check comparators
                 for comp in node.comparators:
-                    if isinstance(comp, ast.Constant) and comp.value == "":
+                    if isinstance(comp, ast.Constant) and isinstance(comp.value, str) and len(comp.value) == 0:
                         is_empty_cmp = True
 
                 if is_empty_cmp:
