@@ -271,16 +271,26 @@ Add to your global or project MCP configuration (`~/.gemini/config/mcp_config.js
 {
   "mcpServers": {
     "axiom-aegis": {
-      "command": "python",
+      "command": "L:\\.Python\\Python312\\python.exe",
       "args": [
-        "L:/path/to/Axiom-Aegis-Veritas/axiom_mcp.py"
-      ]
+        "L:\\.Tool\\Axiom-Aegis-Veritas\\axiom_mcp.py"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONIOENCODING": "utf-8"
+      }
     }
   }
 }
 ```
 
-##### 2. Claude Desktop
+##### 2. LM Studio
+Under **Settings** $\to$ **MCP Servers** (or in `ng-mcp.json`):
+- **Command:** `L:\.Python\Python312\python.exe` (or `python`)
+- **Arguments:** `L:\.Tool\Axiom-Aegis-Veritas\axiom_mcp.py`
+- *(Important: Do not put `.py` directly into Command on Windows as OS file association may invoke Microsoft Store Python or non-configured launchers)*
+
+##### 3. Claude Desktop
 Add to your Claude Desktop configuration (`claude_desktop_config.json` via Settings $\to$ Developer $\to$ Edit Config):
 ```json
 {
@@ -288,14 +298,14 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json` via Setti
     "axiom-aegis-veritas": {
       "command": "python",
       "args": [
-        "L:\\path\\to\\Axiom-Aegis-Veritas\\axiom_mcp.py"
+        "L:\\.Tool\\Axiom-Aegis-Veritas\\axiom_mcp.py"
       ]
     }
   }
 }
 ```
 
-##### 3. Cursor IDE
+##### 4. Cursor IDE
 Add to `.cursor/mcp.json` in your project or global settings:
 ```json
 {
@@ -303,7 +313,7 @@ Add to `.cursor/mcp.json` in your project or global settings:
     "axiom-aegis": {
       "command": "python",
       "args": [
-        "L:/path/to/Axiom-Aegis-Veritas/axiom_mcp.py"
+        "L:\\.Tool\\Axiom-Aegis-Veritas\\axiom_mcp.py"
       ]
     }
   }
