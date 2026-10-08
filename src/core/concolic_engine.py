@@ -33,9 +33,18 @@ from typing import (
     Union,
 )
 
-import libcst as cst
-from libcst import matchers as m
-from libcst.metadata import ScopeProvider, ExpressionContext, PositionProvider
+try:
+    import libcst as cst
+    from libcst import matchers as m
+    from libcst.metadata import ScopeProvider, ExpressionContext, PositionProvider
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    m = None
+    ScopeProvider = None
+    ExpressionContext = None
+    PositionProvider = None
+    HAS_LIBCST = False
 
 logger = logging.getLogger(__name__)
 

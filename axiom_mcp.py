@@ -18,7 +18,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from src.core.preflight import ensure_runtime_ready
 from src.mcp.server import main
 
 if __name__ == "__main__":
+    ensure_runtime_ready(fail_fast=True)
     main()

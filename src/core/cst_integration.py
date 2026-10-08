@@ -4,7 +4,13 @@ CST Integration Module.
 Provides libcst integration for the Layer 5 pipeline.
 """
 
-import libcst as cst
+try:
+    import libcst as cst
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    cst.BaseExpression = cst.AST
+    HAS_LIBCST = False
 from typing import Any, Dict, Optional
 
 

@@ -2,9 +2,17 @@
 PEP 695 Resolver for TypeAlias, TypeVar, ParamSpec, and TypeVarTuple resolution.
 """
 
-import libcst as cst
-from libcst import parse_expression
-from libcst.metadata import ScopeProvider
+try:
+    import libcst as cst
+    from libcst import parse_expression
+    from libcst.metadata import ScopeProvider
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    cst.BaseExpression = cst.AST
+    parse_expression = None
+    ScopeProvider = None
+    HAS_LIBCST = False
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Any, Union
 from enum import Enum

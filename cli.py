@@ -296,7 +296,10 @@ class CIEvaluator:
 
 
 def main() -> None:
-    """Main entrypoint for CLI evaluator"""
+    """Main entrypoint for CLI evaluator with pre-flight dependency verification."""
+    from src.core.preflight import ensure_runtime_ready
+    ensure_runtime_ready(fail_fast=True)
+
     parser = argparse.ArgumentParser(
         description="AXIOM-AEGIS-VERITAS CI/CD Pipeline Evaluator"
     )

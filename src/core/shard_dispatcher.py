@@ -38,8 +38,14 @@ from typing import (
     Union,
 )
 
-import libcst as cst
-from libcst.metadata import ScopeProvider
+try:
+    import libcst as cst
+    from libcst.metadata import ScopeProvider
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    ScopeProvider = None
+    HAS_LIBCST = False
 
 from src.core.dpor_scheduler import DeterministicVirtualScheduler
 

@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axiom-aegis-veritas"
+version = "1.1.0"
+description = "High-Assurance 8-Layer Formal Verification Engine with Layer 8 Attestation Oracle, MCP Server, and Tactical Terminal CUI"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "xTanTHaix" }
+]
+keywords = [
+    "formal-verification",
+    "smt-solver",
+    "octagon-dbm",
+    "merkle-tree",
+    "dpor",
+    "pep695",
+    "attestation",
+    "mcp",
+    "ast-audit"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Security",
+]
+dependencies = [
+    "libcst>=1.0.0",
+    "z3-solver>=5.0.0",
+    "colorama>=0.4.6",
+    "psutil>=5.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-benchmark>=4.0.0",
+]
+cvc5 = [
+    "cvc5>=1.0.0",
+]
+
+[project.scripts]
+axiom = "cli:main"
+axiom-aegis = "cli:main"
+axiom-mcp = "src.mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "src.*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --import-mode=importlib"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"

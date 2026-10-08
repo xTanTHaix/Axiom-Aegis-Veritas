@@ -40,7 +40,12 @@ from typing import (
     Union,
 )
 
-import libcst as cst
+try:
+    import libcst as cst
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    HAS_LIBCST = False
 
 logger = logging.getLogger(__name__)
 

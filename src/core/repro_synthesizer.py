@@ -44,8 +44,15 @@ from typing import (
     Union,
 )
 
-import libcst as cst
-from libcst.metadata import ScopeProvider, ExpressionContext
+try:
+    import libcst as cst
+    from libcst.metadata import ScopeProvider, ExpressionContext
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    ScopeProvider = None
+    ExpressionContext = None
+    HAS_LIBCST = False
 
 logger = logging.getLogger(__name__)
 

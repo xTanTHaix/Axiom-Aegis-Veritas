@@ -19,9 +19,16 @@ import hashlib
 import time
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
-import libcst as cst
+try:
+    import libcst as cst
+    HAS_LIBCST = True
+except ImportError:
+    import ast as cst
+    cst.CSTNode = cst.AST
+    cst.Module = cst.Module
+    HAS_LIBCST = False
 
 
 class MerkleNode:
@@ -152,10 +159,13 @@ class CSTParser:
             self.errors.append(f"File read error: {e}")
             return False
 
-        # Parse into CST
+        # Parse into CST / AST
         try:
-            self.cst = cst.parse_module(content)
-        except cst.ParserSyntaxError as e:
+            if HAS_LIBCST:
+                self.cst = cst.parse_module(content)
+            else:
+                self.cst = cst.parse(content, filename=str(self.file_path))
+        except (SyntaxError, Exception) as e:
             self.errors.append(f"Syntax error: {e}")
             return False
 
